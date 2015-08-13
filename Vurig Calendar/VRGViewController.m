@@ -7,8 +7,7 @@
 //
 
 #import "VRGViewController.h"
-
-
+#import "NSDate+convenience.h"
 
 @interface VRGViewController ()
 
@@ -24,13 +23,10 @@
     VRGCalendarView *calendar = [[VRGCalendarView alloc] init];
     calendar.delegate=self;
     [self.view addSubview:calendar];
-    
-    
-    
 }
 
--(void)calendarView:(VRGCalendarView *)calendarView switchedToMonth:(int)month targetHeight:(float)targetHeight animated:(BOOL)animated {
-    if (month==[[NSDate date] month]) {
+-(void)calendarView:(VRGCalendarView *)calendarView switchedToMonth:(NSInteger)month targetHeight:(CGFloat)targetHeight animated:(BOOL)animated {
+    if (month == [[NSDate date] month]) {
         NSArray *dates = [NSArray arrayWithObjects:[NSNumber numberWithInt:1],[NSNumber numberWithInt:5], nil];
         [calendarView markDates:dates];
     }

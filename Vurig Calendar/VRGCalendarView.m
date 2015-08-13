@@ -17,16 +17,16 @@
 @synthesize markedDates,markedColors,calendarHeight,selectedDate;
 
 #pragma mark - Select Date
--(void)selectDate:(int)date {
+-(void)selectDate:(NSInteger)date {
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateComponents *comps = [gregorian components:NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit fromDate:self.currentMonth];
     [comps setDay:date];
     self.selectedDate = [gregorian dateFromComponents:comps];
     
-    int selectedDateYear = [selectedDate year];
-    int selectedDateMonth = [selectedDate month];
-    int currentMonthYear = [currentMonth year];
-    int currentMonthMonth = [currentMonth month];
+    NSInteger selectedDateYear = [selectedDate year];
+    NSInteger selectedDateMonth = [selectedDate month];
+    NSInteger currentMonthYear = [currentMonth year];
+    NSInteger currentMonthMonth = [currentMonth month];
     
     if (selectedDateYear < currentMonthYear) {
         [self showPreviousMonth];
@@ -44,12 +44,12 @@
 }
 
 #pragma mark - Mark Dates
-//NSArray can either contain NSDate objects or NSNumber objects with an int of the day.
+//NSArray can either contain NSDate objects or NSNumber objects with an NSInteger of the day.
 -(void)markDates:(NSArray *)dates {
     self.markedDates = dates;
     NSMutableArray *colors = [[NSMutableArray alloc] init];
     
-    for (int i = 0; i<[dates count]; i++) {
+    for (NSInteger i = 0; i<[dates count]; i++) {
         [colors addObject:[UIColor colorWithHexString:@"0x383838"]];
     }
     
@@ -59,7 +59,7 @@
     [self setNeedsDisplay];
 }
 
-//NSArray can either contain NSDate objects or NSNumber objects with an int of the day.
+//NSArray can either contain NSDate objects or NSNumber objects with an NSInteger of the day.
 -(void)markDates:(NSArray *)dates withColors:(NSArray *)colors {
     self.markedDates = dates;
     self.markedColors = colors;
@@ -90,8 +90,8 @@
     
     [self setNeedsDisplay];
     
-    int lastBlock = [currentMonth firstWeekDayInMonth]+[currentMonth numDaysInMonth]-1;
-    int numBlocks = [self numRows]*7;
+    NSInteger lastBlock = [currentMonth firstWeekDayInMonth]+[currentMonth numDaysInMonth]-1;
+    NSInteger numBlocks = [self numRows]*7;
     BOOL hasNextMonthDays = lastBlock<numBlocks;
     
     //Old month
@@ -219,8 +219,8 @@
     return kVRGCalendarViewTopBarHeight + [self numRows]*(kVRGCalendarViewDayHeight+2)+1;
 }
 
--(int)numRows {
-    float lastBlock = [self.currentMonth numDaysInMonth]+([self.currentMonth firstWeekDayInMonth]-1);
+-(NSInteger)numRows {
+    CGFloat lastBlock = [self.currentMonth numDaysInMonth]+([self.currentMonth firstWeekDayInMonth]-1);
     return ceilf(lastBlock/7);
 }
 
@@ -237,12 +237,12 @@
         float xLocation = touchPoint.x;
         float yLocation = touchPoint.y-kVRGCalendarViewTopBarHeight;
         
-        int column = floorf(xLocation/(kVRGCalendarViewDayWidth+2));
-        int row = floorf(yLocation/(kVRGCalendarViewDayHeight+2));
+        NSInteger column = floorf(xLocation/(kVRGCalendarViewDayWidth+2));
+        NSInteger row = floorf(yLocation/(kVRGCalendarViewDayHeight+2));
         
-        int blockNr = (column+1)+row*7;
-        int firstWeekDay = [self.currentMonth firstWeekDayInMonth]-1; //-1 because weekdays begin at 1, not 0
-        int date = blockNr-firstWeekDay;
+        NSInteger blockNr = (column+1)+row*7;
+        NSInteger firstWeekDay = [self.currentMonth firstWeekDayInMonth]-1; //-1 because weekdays begin at 1, not 0
+        NSInteger date = blockNr-firstWeekDay;
         [self selectDate:date];
         return;
     }
@@ -260,8 +260,8 @@
         [self showNextMonth];
     } else if (CGRectContainsPoint(self.labelCurrentMonth.frame, touchPoint)) {
         //Detect touch in current month
-        int currentMonthIndex = [self.currentMonth month];
-        int todayMonth = [[NSDate date] month];
+        NSInteger currentMonthIndex = [self.currentMonth month];
+        NSInteger todayMonth = [[NSDate date] month];
         [self reset];
         if ((todayMonth!=currentMonthIndex) && [delegate respondsToSelector:@selector(calendarView:switchedToMonth:targetHeight:animated:)]) [delegate calendarView:self switchedToMonth:[currentMonth month] targetHeight:self.calendarHeight animated:NO];
     }
@@ -270,7 +270,7 @@
 #pragma mark - Drawing
 - (void)drawRect:(CGRect)rect
 {
-    int firstWeekDay = [self.currentMonth firstWeekDayInMonth]-1; //-1 because weekdays begin at 1, not 0
+    NSInteger firstWeekDay = [self.currentMonth firstWeekDayInMonth]-1; //-1 because weekdays begin at 1, not 0
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"MMMM yyyy"];
@@ -290,9 +290,9 @@
     CGContextFillPath(context);
     
     //Arrows
-    int arrowSize = 12;
-    int xmargin = 20;
-    int ymargin = 18;
+    NSInteger arrowSize = 12;
+    NSInteger xmargin = 20;
+    NSInteger ymargin = 18;
     
     //Arrow Left
     CGContextBeginPath(context);
@@ -325,13 +325,13 @@
     
     CGContextSetFillColorWithColor(context, 
                                    [UIColor colorWithHexString:@"0x383838"].CGColor);
-    for (int i =0; i<[weekdays count]; i++) {
+    for (NSInteger i =0; i<[weekdays count]; i++) {
         NSString *weekdayValue = (NSString *)[weekdays objectAtIndex:i];
         UIFont *font = [UIFont fontWithName:@"HelveticaNeue" size:12];
-        [weekdayValue drawInRect:CGRectMake(i*(kVRGCalendarViewDayWidth+2), 40, kVRGCalendarViewDayWidth+2, 20) withFont:font lineBreakMode:UILineBreakModeClip alignment:UITextAlignmentCenter];
+        [weekdayValue drawInRect:CGRectMake(i*(kVRGCalendarViewDayWidth+2), 40, kVRGCalendarViewDayWidth+2, 20) withFont:font lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentCenter];
     }
     
-    int numRows = [self numRows];
+    NSInteger numRows = [self numRows];
     
     CGContextSetAllowsAntialiasing(context, NO);
     
@@ -348,7 +348,7 @@
     CGContextBeginPath(context);
     CGContextMoveToPoint(context, 0, kVRGCalendarViewTopBarHeight+1);
     CGContextAddLineToPoint(context, kVRGCalendarViewWidth, kVRGCalendarViewTopBarHeight+1);
-    for (int i = 1; i<7; i++) {
+    for (NSInteger i = 1; i<7; i++) {
         CGContextMoveToPoint(context, i*(kVRGCalendarViewDayWidth+1)+i*1-1, kVRGCalendarViewTopBarHeight);
         CGContextAddLineToPoint(context, i*(kVRGCalendarViewDayWidth+1)+i*1-1, kVRGCalendarViewTopBarHeight+gridHeight);
         
@@ -365,7 +365,7 @@
     CGContextBeginPath(context);
     CGContextMoveToPoint(context, 0, kVRGCalendarViewTopBarHeight);
     CGContextAddLineToPoint(context, kVRGCalendarViewWidth, kVRGCalendarViewTopBarHeight);
-    for (int i = 1; i<7; i++) {
+    for (NSInteger i = 1; i<7; i++) {
         //columns
         CGContextMoveToPoint(context, i*(kVRGCalendarViewDayWidth+1)+i*1, kVRGCalendarViewTopBarHeight);
         CGContextAddLineToPoint(context, i*(kVRGCalendarViewDayWidth+1)+i*1, kVRGCalendarViewTopBarHeight+gridHeight);
@@ -389,12 +389,12 @@
     
     //NSLog(@"currentMonth month = %i, first weekday in month = %i",[self.currentMonth month],[self.currentMonth firstWeekDayInMonth]);
     
-    int numBlocks = numRows*7;
+    NSInteger numBlocks = numRows*7;
     NSDate *previousMonth = [self.currentMonth offsetMonth:-1];
-    int currentMonthNumDays = [currentMonth numDaysInMonth];
-    int prevMonthNumDays = [previousMonth numDaysInMonth];
+    NSInteger currentMonthNumDays = [currentMonth numDaysInMonth];
+    NSInteger prevMonthNumDays = [previousMonth numDaysInMonth];
     
-    int selectedDateBlock = ([selectedDate day]-1)+firstWeekDay;
+    NSInteger selectedDateBlock = ([selectedDate day]-1)+firstWeekDay;
     
     //prepAnimationPreviousMonth nog wat mee doen
     
@@ -411,7 +411,7 @@
     }
     
     if (isSelectedDatePreviousMonth) {
-        int lastPositionPreviousMonth = firstWeekDay-1;
+        NSInteger lastPositionPreviousMonth = firstWeekDay-1;
         selectedDateBlock=lastPositionPreviousMonth-([selectedDate numDaysInMonth]-[selectedDate day]);
     } else if (isSelectedDateNextMonth) {
         selectedDateBlock = [currentMonth numDaysInMonth] + (firstWeekDay-1) + [selectedDate day];
@@ -419,7 +419,7 @@
     
     
     NSDate *todayDate = [NSDate date];
-    int todayBlock = -1;
+    NSInteger todayBlock = -1;
     
 //    NSLog(@"currentMonth month = %i day = %i, todaydate day = %i",[currentMonth month],[currentMonth day],[todayDate month]);
     
@@ -427,12 +427,12 @@
         todayBlock = [todayDate day] + firstWeekDay - 1;
     }
     
-    for (int i=0; i<numBlocks; i++) {
-        int targetDate = i;
-        int targetColumn = i%7;
-        int targetRow = i/7;
-        int targetX = targetColumn * (kVRGCalendarViewDayWidth+2);
-        int targetY = kVRGCalendarViewTopBarHeight + targetRow * (kVRGCalendarViewDayHeight+2);
+    for (NSInteger i=0; i<numBlocks; i++) {
+        NSInteger targetDate = i;
+        NSInteger targetColumn = i%7;
+        NSInteger targetRow = i/7;
+        NSInteger targetX = targetColumn * (kVRGCalendarViewDayWidth+2);
+        NSInteger targetY = kVRGCalendarViewTopBarHeight + targetRow * (kVRGCalendarViewDayHeight+2);
         
         // BOOL isCurrentMonth = NO;
         if (i<firstWeekDay) { //previous month
@@ -454,7 +454,7 @@
                                            [UIColor colorWithHexString:hex].CGColor);
         }
         
-        NSString *date = [NSString stringWithFormat:@"%i",targetDate];
+        NSString *date = [NSString stringWithFormat:@"%@", @(targetDate)];
         
         //draw selected date
         if (selectedDate && i==selectedDateBlock) {
@@ -475,7 +475,7 @@
                                            [UIColor whiteColor].CGColor);
         }
         
-        [date drawInRect:CGRectMake(targetX+2, targetY+10, kVRGCalendarViewDayWidth, kVRGCalendarViewDayHeight) withFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:17] lineBreakMode:UILineBreakModeClip alignment:UITextAlignmentCenter];
+        [date drawInRect:CGRectMake(targetX+2, targetY+10, kVRGCalendarViewDayWidth, kVRGCalendarViewDayHeight) withFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:17] lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentCenter];
     }
     
     //    CGContextClosePath(context);
@@ -484,10 +484,10 @@
     //Draw markings
     if (!self.markedDates || isSelectedDatePreviousMonth || isSelectedDateNextMonth) return;
     
-    for (int i = 0; i<[self.markedDates count]; i++) {
+    for (NSInteger i = 0; i<[self.markedDates count]; i++) {
         id markedDateObj = [self.markedDates objectAtIndex:i];
         
-        int targetDate;
+        NSInteger targetDate;
         if ([markedDateObj isKindOfClass:[NSNumber class]]) {
             targetDate = [(NSNumber *)markedDateObj intValue];
         } else if ([markedDateObj isKindOfClass:[NSDate class]]) {
@@ -499,12 +499,12 @@
         
         
         
-        int targetBlock = firstWeekDay + (targetDate-1);
-        int targetColumn = targetBlock%7;
-        int targetRow = targetBlock/7;
+        NSInteger targetBlock = firstWeekDay + (targetDate-1);
+        NSInteger targetColumn = targetBlock%7;
+        NSInteger targetRow = targetBlock/7;
         
-        int targetX = targetColumn * (kVRGCalendarViewDayWidth+2) + 7;
-        int targetY = kVRGCalendarViewTopBarHeight + targetRow * (kVRGCalendarViewDayHeight+2) + 38;
+        NSInteger targetX = targetColumn * (kVRGCalendarViewDayWidth+2) + 7;
+        NSInteger targetY = kVRGCalendarViewTopBarHeight + targetRow * (kVRGCalendarViewDayHeight+2) + 38;
         
         CGRect rectangle = CGRectMake(targetX,targetY,32,2);
         CGContextAddRect(context, rectangle);

@@ -45,7 +45,7 @@
 @property (nonatomic, getter = calendarHeight) float calendarHeight;
 @property (nonatomic, retain, getter = selectedDate) NSDate *selectedDate;
 
--(void)selectDate:(int)date;
+-(void)selectDate:(NSInteger)date;
 -(void)reset;
 
 -(void)markDates:(NSArray *)dates;
@@ -54,13 +54,13 @@
 -(void)showNextMonth;
 -(void)showPreviousMonth;
 
--(int)numRows;
+-(NSInteger)numRows;
 -(void)updateSize;
 -(UIImage *)drawCurrentState;
 
 @end
 
 @protocol VRGCalendarViewDelegate <NSObject>
--(void)calendarView:(VRGCalendarView *)calendarView switchedToMonth:(int)month targetHeight:(float)targetHeight animated:(BOOL)animated;
+-(void)calendarView:(VRGCalendarView *)calendarView switchedToMonth:(NSInteger)month targetHeight:(CGFloat)targetHeight animated:(BOOL)animated;
 -(void)calendarView:(VRGCalendarView *)calendarView dateSelected:(NSDate *)date;
 @end
